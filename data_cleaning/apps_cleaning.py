@@ -74,6 +74,19 @@ def _coerce_rating_0_5(s: pd.Series) -> Tuple[pd.Series, pd.Index]:
     out.loc[bad] = pd.NA
     return out, bad
 
+def _bucket_versions(x: pd.Series) ->pd.Series:
+  """bucketing each version to their closest int value and filling the missing with the median values"""
+  x_clean = x.astype("string").str.strip().str[0]
+  x_bucketed = pd.to_numeric(x_clean,errors='coerce')
+  x_bucketed.fillna(x_bucketed.median(numeric_only=True), inplace=True)
+  na_idx = x_bucketed[x_bucketed.isna()].index
+  return x_bucketed,na_idx
+
+def _seg_genres(x):
+  """seperating each clubbed genre of the app"""
+  x_exploded=x.astype("string").str.split(r'[;&]').apply(lambda listed : [s.strip() for s in listed]).explode().reset_index(drop=True)   
+  na_idx = x_exploded[x_exploded.isna()].index
+  return x_exploded,na_idx
 
 def _parse_last_updated(s: pd.Series) -> pd.Series:
     """Parse `Last Updated` into pandas datetime (UTC-naive).
@@ -134,8 +147,10 @@ def clean_googleplay_apps(
         Tuple[pd.DataFrame, Dict[str, object]]
     """
 
-    df0 = pd.read_csv(in_csv, dtype=str, na_values=NA_STRINGS, keep_default_na=True)
+    df0 = pd.read_csv(in_csv,na_values=NA_STRINGS, keep_default_na=True)
     df0 = df0.reset_index(drop=True)
+    
+    df0.fillna(df0.median(numeric_only=True), inplace=True)
 
     report: Dict[str, object] = {}
     report["rows_in"] = len(df0)
@@ -222,14 +237,43 @@ def clean_googleplay_apps(
 
     # (6) Size NA count (unit conversion is handled in apps_basic_stats)
     if "Size" in df1.columns:
-        size = df1["Size"].astype("string")
-        size_na_mask = size.isna() | (size.str.strip() == "")
-        na_size_idx = df1.index[size_na_mask]
-        report["size_na"] = int(size_na_mask.sum())
+        # size = df1["Size"].astype("string")
+        df1["Size"] = _size_to_mb(df1["Size"])
+        # size_na_mask = size.isna() | (size.str.strip() == "")
+         
+        # na_size_idx = df1.index[size_na_mask]
+        na_size_idx=df1[df1["Size"].isna()].index
+        # report["size_na"] = int(size_na_mask.sum())
+        report["size_na"]=len(na_size_idx)
         report["size_na_lines"] = _csv_line_numbers(na_size_idx)
     else:
         report["size_na"] = 0
         report["size_na_lines"] = []
+
+    if "Current Ver" in df1.columns:
+        df1["Current Ver"], na_cur_vr_idx = _bucket_versions(df1["Current Ver"])
+        report["current_ver_na"] = len(na_cur_vr_idx)
+        report["current_ver_na_lines"] = _csv_line_numbers(na_cur_vr_idx)
+    else:
+        report["current_ver_na"] = 0
+        report["current_ver_na_lines"] = []
+
+    if "Android Ver" in df1.columns:
+        df1["Android Ver"], na_and_vr_idx = _bucket_versions(df1["Android Ver"])
+        report["android_ver_na"] = len(na_and_vr_idx)
+        report["android_ver_na_lines"] = _csv_line_numbers(na_and_vr_idx)
+    else:
+        report["android_ver_na"] = 0
+        report["android_ver_na_lines"] = [] 
+
+    if "Genres" in df1.columns:
+        df1["Genres"], na_gen_idx = _seg_genres(df1["Genres"])
+        report["genres_na"] = len(na_gen_idx)
+        report["genres_na_lines"] = _csv_line_numbers(na_gen_idx)
+    else:
+        report["genres_na"] = 0
+        report["genres_na_lines"] = []          
+
 
     # (7) Simple NA counts for Type / Content Rating
     for col, key in [("Type", "type_na"), ("Content Rating", "content_rating_na")]:
@@ -256,21 +300,7 @@ def clean_googleplay_apps(
 
     return df1, report
 
-
-def apps_basic_stats(df: pd.DataFrame) -> pd.DataFrame:
-    """Compute basic numeric stats for apps.
-
-    Columns considered: `Rating`, `Reviews`, `Installs`, `Price`, and `Size_MB`
-    (derived from `Size`). Output columns: `column, count_non_null, count_na,
-    min, max, mean, std`.
-
-    Args:
-        df (pd.DataFrame): Cleaned apps DataFrame.
-
-    Returns:
-        pd.DataFrame: Summary statistics table.
-    """
-    def _size_to_mb(s: pd.Series) -> pd.Series:
+def _size_to_mb(s: pd.Series) -> pd.Series:
         """Convert `Size` strings (e.g., '14M', '512k') to MB as Float64.
 
             - 'M' → MB
@@ -283,8 +313,8 @@ def apps_basic_stats(df: pd.DataFrame) -> pd.DataFrame:
         Returns:
             pd.Series: Float64 MB values with NA where unparseable.
         """
-        ser = s.astype("string")
-
+        # ser = s.astype("string")
+        ser = s.astype(str)
         def parse_one(x: str):
             if x is None or pd.isna(x):
                 return pd.NA
@@ -301,7 +331,59 @@ def apps_basic_stats(df: pd.DataFrame) -> pd.DataFrame:
                 return pd.NA
 
         out = ser.map(parse_one)
+        median_val = out.median()
+        out = out.fillna(median_val)
+        # out.fillna(out.median(numeric_only=True), inplace=True)
         return out.astype("Float64")
+
+def apps_basic_stats(df: pd.DataFrame) -> pd.DataFrame:
+    """Compute basic numeric stats for apps.
+
+    Columns considered: `Rating`, `Reviews`, `Installs`, `Price`, and `Size_MB`
+    (derived from `Size`). Output columns: `column, count_non_null, count_na,
+    min, max, mean, std`.
+
+    Args:
+        df (pd.DataFrame): Cleaned apps DataFrame.
+
+    Returns:
+        pd.DataFrame: Summary statistics table.
+    """
+    # def _size_to_mb(s: pd.Series) -> pd.Series:
+    #     """Convert `Size` strings (e.g., '14M', '512k') to MB as Float64.
+
+    #         - 'M' → MB
+    #         - 'K' → KB (divided by 1024)
+    #         - blank/special tokens → NA
+
+    #     Args:
+    #         s (pd.Series): The `Size` column.
+
+    #     Returns:
+    #         pd.Series: Float64 MB values with NA where unparseable.
+    #     """
+    #     ser = s.astype("string")
+
+    #     def parse_one(x: str):
+    #         if x is None or pd.isna(x):
+    #             return pd.NA
+    #         t = x.strip().replace(" ", "").upper()
+    #         if t == "" or t in {"VARIESWITHDEVICE", "VARIES", "NAN"}:
+    #             return pd.NA
+    #         try:
+    #             if t.endswith("M"):
+    #                 return float(t[:-1])
+    #             if t.endswith("K"):
+    #                 return float(t[:-1]) / 1024.0
+    #             return float(t)  # plain number fallback
+    #         except Exception:
+    #             return pd.NA
+
+    #     out = ser.map(parse_one)
+    #     # median_val = out.median()
+    #     # out = out.fillna(median_val)
+    #     # out.fillna(out.median(numeric_only=True), inplace=True)
+    #     return out.astype("Float64")
 
     cols: Dict[str, pd.Series] = {}
     if "Rating" in df.columns:
@@ -313,7 +395,13 @@ def apps_basic_stats(df: pd.DataFrame) -> pd.DataFrame:
     if "Price" in df.columns:
         cols["Price"] = pd.to_numeric(df["Price"], errors="coerce")
     if "Size" in df.columns:
-        cols["Size_MB"] = _size_to_mb(df["Size"])
+        # cols["Size_MB"] = _size_to_mb(df["Size"])
+        cols["Size_MB"] =pd.to_numeric(df["Size"], errors="coerce")
+    if "Current Ver" in df.columns:
+        cols["Current Ver"] = df["Current Ver"]
+    if "Android Ver" in df.columns:
+        cols["Android Ver"]=df["Android Ver"]
+     
 
     rows = []
     for name, s in cols.items():

@@ -70,6 +70,16 @@ if __name__ == "__main__":
     print(f"Type NA: {rep_apps.get('type_na', 0)}")
     print("  -> csv lines (sample):", _sample_lines(rep_apps.get("type_na_lines", [])))
 
+    print(f"Current Ver NA: {rep_apps.get('current_ver_na', 0)}")
+    print("  -> csv lines (sample):", _sample_lines(rep_apps.get("current_ver_na", [])))
+
+    print(f"Android Ver NA: {rep_apps.get('android_ver_na', 0)}")
+    print("  -> csv lines (sample):", _sample_lines(rep_apps.get("android_ver_na", [])))
+
+    print(f"Genres NA: {rep_apps.get('genres_na', 0)}")
+    print("  -> csv lines (sample):", _sample_lines(rep_apps.get("genres_na", [])))
+
+
     # ======= Apps: numeric basic stats  =======
     stats_apps = apps_basic_stats(df_apps)
     print("\n[Apps] Basic stats:")
