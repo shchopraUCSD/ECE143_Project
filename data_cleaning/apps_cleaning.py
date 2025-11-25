@@ -273,7 +273,8 @@ def clean_googleplay_apps(
     # else:
     #     report["genres_na"] = 0
     #     report["genres_na_lines"] = []          
-
+    df1["Popularity Score"] = df1["Rating"] * np.log1p(df1["Installs"])
+    df1["Popularity Score"]  =  pd.qcut(df1["Popularity Score"], 5, labels=[1,2,3,4,5])
 
     # (7) Simple NA counts for Type / Content Rating
     for col, key in [("Type", "type_na"), ("Content Rating", "content_rating_na")]:

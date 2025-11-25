@@ -1,0 +1,88 @@
+
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple,Union
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+import seaborn as sns
+# from apps_cleaning import head_with_csv_lines, clean_googleplay_apps, apps_basic_stats
+
+def create_viz_for_content_rating(df: pd.DataFrame,out_dir:  Path):
+    out_dir.mkdir(parents=True, exist_ok=True)
+    # What is the count of apps under each content rating?
+    counts = df['Content Rating'].value_counts()
+    sizes = counts.values
+    plt.scatter(counts.index, counts.values, s=sizes, alpha=0.6,c=counts.values)
+    plt.xlabel("Category Rating")
+    plt.ylabel("Count")
+    plt.title("Count of Content Rating of App")
+    plt.savefig(out_dir / f"Content_Rating_vs_Count.png", bbox_inches="tight")
+    plt.close()
+    # plt.show()
+    
+    #What is the content rating plot for each category? Which category has which kind of content rating?
+    plt.figure(figsize=(20,6))
+    categories=df["Category"].unique()
+    palette = sns.color_palette("Set2", n_colors=len(categories))
+    grid=sns.FacetGrid(df,col="Content Rating",col_wrap=3,height=7,sharey=False)
+    grid.map_dataframe(sns.countplot,x="Category",palette=palette)
+    for axis in grid.axes.flatten():
+        axis.set_xticklabels([])
+    patches = [mpatches.Patch(color=palette[i], label=cat) for i, cat in enumerate(categories)]
+    plt.legend(handles=patches, title="Categories", bbox_to_anchor=(1.05, 1), loc='upper left')
+
+    grid.set_ylabels("Category Count")  
+    grid.figure.suptitle(f"Category Count  per Content Rating Plot")
+    plt.tight_layout()
+    plt.savefig(out_dir / f"Content_Rating_vs_Category_Count.png", bbox_inches="tight")
+    plt.close()
+    # plt.show()
+    
+    #Does the Content Rating Affect the number of installs? That is if it is tagged to wider section of audience will that affect the number of installs?
+    plt.figure(figsize=(12,6))
+    sns.boxplot(data=df, x="Content Rating", y="Installs", palette='Set2')
+    plt.yscale('log')
+    plt.xlabel("Content Rating")
+    plt.ylabel("Installs")
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.xticks(rotation=45)
+    plt.title(f"Content Rating  vs Installs Plot")
+    plt.savefig(out_dir / f"Content_Rating_vs_Installs.png", bbox_inches="tight")
+    plt.close()
+    # plt.show()
+
+    #Which Kinds of apps are more popular?
+    plt.figure(figsize=(12,6))
+    heatmp = pd.crosstab(df["Content Rating"], df["Popularity Score"])
+    sns.heatmap(heatmp, annot=True)
+    plt.xlabel("Popularity Score")
+    plt.ylabel("Content Rating")
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.xticks(rotation=45)
+    plt.title("Content Rating vs Popularity Score")
+    plt.savefig(out_dir / f"Content_Rating_vs_Popularity_Score.png", bbox_inches="tight")
+    plt.close()
+    # plt.show()
+
+
+
+
+def create_analysis_dashboard (df: pd.DataFrame,path : str):
+    print("creating visualisation for content rating col")
+    create_viz_for_content_rating(df, Path(path))
+        
+
+
+
+
+
+
+
+
+
+
+
+
+    
+

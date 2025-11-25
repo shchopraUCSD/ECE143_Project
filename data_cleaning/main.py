@@ -1,6 +1,7 @@
 # main.py
 from reviews_cleaning import run_reviews_cleaning, run_reviews_stats
 from apps_cleaning import head_with_csv_lines, clean_googleplay_apps, apps_basic_stats
+from data_visualisation import create_analysis_dashboard
 
 
 def _sample_lines(lines, k=20):
@@ -79,7 +80,8 @@ if __name__ == "__main__":
     # print(f"Genres NA: {rep_apps.get('genres_na', 0)}")
     # print("  -> csv lines (sample):", _sample_lines(rep_apps.get("genres_na", [])))
 
-
+    # ======== Apps: Visualisation ==========
+    create_analysis_dashboard(df_apps,FIG_REV)
     # ======= Apps: numeric basic stats  =======
     stats_apps = apps_basic_stats(df_apps)
     print("\n[Apps] Basic stats:")
