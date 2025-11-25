@@ -6,7 +6,7 @@ from typing import Dict, List, Tuple, Union, Optional
 import numpy as np
 import pandas as pd
 
-NA_STRINGS = ["nan", "NaN", "NULL", "null", "None", "", "Varies with device"]
+NA_STRINGS = ["nan", "NaN", "NULL", "null", "None", ""]
 
 
 def _csv_line_numbers(idx: pd.Index) -> List[int]:
@@ -82,11 +82,11 @@ def _bucket_versions(x: pd.Series) ->pd.Series:
   na_idx = x_bucketed[x_bucketed.isna()].index
   return x_bucketed,na_idx
 
-def _seg_genres(x):
-  """seperating each clubbed genre of the app"""
-  x_exploded=x.astype("string").str.split(r'[;&]').apply(lambda listed : [s.strip() for s in listed]).explode().reset_index(drop=True)   
-  na_idx = x_exploded[x_exploded.isna()].index
-  return x_exploded,na_idx
+# def _seg_genres(x):
+#   """seperating each clubbed genre of the app"""
+#   x_exploded=x.astype("string").str.split(r'[;&]').apply(lambda listed : [s.strip() for s in listed]).explode().reset_index(drop=True)   
+#   na_idx = x_exploded[x_exploded.isna()].index
+#   return x_exploded,na_idx
 
 def _parse_last_updated(s: pd.Series) -> pd.Series:
     """Parse `Last Updated` into pandas datetime (UTC-naive).
@@ -150,7 +150,7 @@ def clean_googleplay_apps(
     df0 = pd.read_csv(in_csv,na_values=NA_STRINGS, keep_default_na=True)
     df0 = df0.reset_index(drop=True)
     
-    df0.fillna(df0.median(numeric_only=True), inplace=True)
+    # df0.fillna(df0.median(numeric_only=True), inplace=True)
 
     report: Dict[str, object] = {}
     report["rows_in"] = len(df0)
@@ -250,13 +250,13 @@ def clean_googleplay_apps(
         report["size_na"] = 0
         report["size_na_lines"] = []
 
-    if "Current Ver" in df1.columns:
-        df1["Current Ver"], na_cur_vr_idx = _bucket_versions(df1["Current Ver"])
-        report["current_ver_na"] = len(na_cur_vr_idx)
-        report["current_ver_na_lines"] = _csv_line_numbers(na_cur_vr_idx)
-    else:
-        report["current_ver_na"] = 0
-        report["current_ver_na_lines"] = []
+    # if "Current Ver" in df1.columns:
+    #     df1["Current Ver"], na_cur_vr_idx = _bucket_versions(df1["Current Ver"])
+    #     report["current_ver_na"] = len(na_cur_vr_idx)
+    #     report["current_ver_na_lines"] = _csv_line_numbers(na_cur_vr_idx)
+    # else:
+    #     report["current_ver_na"] = 0
+    #     report["current_ver_na_lines"] = []
 
     if "Android Ver" in df1.columns:
         df1["Android Ver"], na_and_vr_idx = _bucket_versions(df1["Android Ver"])
@@ -266,13 +266,13 @@ def clean_googleplay_apps(
         report["android_ver_na"] = 0
         report["android_ver_na_lines"] = [] 
 
-    if "Genres" in df1.columns:
-        df1["Genres"], na_gen_idx = _seg_genres(df1["Genres"])
-        report["genres_na"] = len(na_gen_idx)
-        report["genres_na_lines"] = _csv_line_numbers(na_gen_idx)
-    else:
-        report["genres_na"] = 0
-        report["genres_na_lines"] = []          
+    # if "Genres" in df1.columns:
+    #     df1["Genres"], na_gen_idx = _seg_genres(df1["Genres"])
+    #     report["genres_na"] = len(na_gen_idx)
+    #     report["genres_na_lines"] = _csv_line_numbers(na_gen_idx)
+    # else:
+    #     report["genres_na"] = 0
+    #     report["genres_na_lines"] = []          
 
 
     # (7) Simple NA counts for Type / Content Rating
@@ -395,10 +395,10 @@ def apps_basic_stats(df: pd.DataFrame) -> pd.DataFrame:
     if "Price" in df.columns:
         cols["Price"] = pd.to_numeric(df["Price"], errors="coerce")
     if "Size" in df.columns:
-        # cols["Size_MB"] = _size_to_mb(df["Size"])
+        cols["Size_MB"] = _size_to_mb(df["Size"])
         cols["Size_MB"] =pd.to_numeric(df["Size"], errors="coerce")
-    if "Current Ver" in df.columns:
-        cols["Current Ver"] = df["Current Ver"]
+    # if "Current Ver" in df.columns:
+    #     cols["Current Ver"] = df["Current Ver"]
     if "Android Ver" in df.columns:
         cols["Android Ver"]=df["Android Ver"]
      
