@@ -44,22 +44,23 @@ def build_stats(df):
         return float(numer) / float(denom)
 
     def count_nans(group):
-        cols = ["Sentiment", "Sentiment_Polarity", "Sentiment_Subjectivity"]
-        return int(group[cols].isna().sum().sum())
+        # Count NaNs in Translated_Review column only
+        return int(group["Translated_Review"].isna().sum())
 
     grouped = df.groupby("App", dropna=False)
 
     # Calculate mean, median and std without Nan
     out = pd.DataFrame({
         "Translated_Review_list": grouped["Translated_Review"].apply(review_list),
-        "Sentiment_Positive_Percentile": grouped.apply(positive_percent),
+        "Sentiment_Positive_Percentile": grouped.apply(positive_percent, include_groups=False),
         "Sentiment_Polarity_Mean": grouped["Sentiment_Polarity"].mean(),
         "Sentiment_Polarity_Median": grouped["Sentiment_Polarity"].median(),
         "Sentiment_Polarity_STD": grouped["Sentiment_Polarity"].std(),
         "Sentiment_Subjectivity_Mean": grouped["Sentiment_Subjectivity"].mean(),
         "Sentiment_Subjectivity_Median": grouped["Sentiment_Subjectivity"].median(),
         "Sentiment_Subjectivity_STD": grouped["Sentiment_Subjectivity"].std(),
-        "Number_of_Nans": grouped.apply(count_nans),
+        "Number_of_Nans": grouped.apply(count_nans, include_groups=False),
+        "Total_Reviews": grouped.size(),  # Total number of reviews including NaNs
     }).reset_index()
 
     return out
