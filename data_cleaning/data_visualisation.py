@@ -11,6 +11,7 @@ import seaborn as sns
 def create_viz_for_content_rating(df: pd.DataFrame,out_dir:  Path):
     out_dir.mkdir(parents=True, exist_ok=True)
     # What is the count of apps under each content rating?
+    plt.figure(figsize=(20,6))
     counts = df['Content Rating'].value_counts()
     sizes = counts.values
     plt.scatter(counts.index, counts.values, s=sizes, alpha=0.6,c=counts.values)
@@ -52,19 +53,24 @@ def create_viz_for_content_rating(df: pd.DataFrame,out_dir:  Path):
     plt.close()
     # plt.show()
 
-    #Which Kinds of apps are more popular?
-    plt.figure(figsize=(12,6))
-    heatmp = pd.crosstab(df["Content Rating"], df["Popularity Score"])
-    sns.heatmap(heatmp, annot=True)
-    plt.xlabel("Popularity Score")
-    plt.ylabel("Content Rating")
-    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-    plt.xticks(rotation=45)
-    plt.title("Content Rating vs Popularity Score")
-    plt.savefig(out_dir / f"Content_Rating_vs_Popularity_Score.png", bbox_inches="tight")
-    plt.close()
-    # plt.show()
 
+    #What are the best installs values for top 2
+    for m in counts.index:
+        df1=df[df["Content Rating"] == m]
+        info_graphs= df1['Category'].value_counts().nlargest(2).index
+        df1=df1[df1["Category"].isin(info_graphs)]
+        plt.figure(figsize=(5,4))
+        sns.boxplot(data=df1, x="Category", y="Installs", palette='Set2')
+        plt.yscale('log')
+        plt.title(f"Top 2 Categories for {m}")
+        plt.xlabel("Category")
+        plt.ylabel("Installs")
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.xticks(rotation=45)
+        plt.savefig(out_dir / f"Top 2 Categories for {m}.png", bbox_inches="tight")
+        plt.close()
+
+    
 
 
 
