@@ -10,9 +10,9 @@ def _sample_lines(lines, k=20):
 
 if __name__ == "__main__":
     # ======= Reviews: clean + stats + figs =======
-    IN_REV  = "data_raw/googleplaystore_user_reviews.csv"
-    OUT_REV = "data_processed/reviews_clean.csv"
-    FIG_REV = "figs/reviews"
+    IN_REV  = "D:/aditi/Quarter1/ECE143/ECE143_Project/data_cleaning/data_raw/googleplaystore_user_reviews.csv"
+    OUT_REV = "D:/aditi/Quarter1/ECE143/ECE143_Project/data_cleaning/data_processed/reviews_clean.csv"
+    FIG_REV = "D:/aditi/Quarter1/ECE143/ECE143_Project/data_cleaning/figs/reviews"
 
     df_rev, rep_rev = run_reviews_cleaning(IN_REV, out_csv=OUT_REV, also_drop_empty_text=True)
     stats_rev = run_reviews_stats(OUT_REV, out_dir=FIG_REV)
@@ -26,13 +26,13 @@ if __name__ == "__main__":
     print(f"\nFigures saved to: {FIG_REV}")
 
     # ======= Apps: preview first 5 rows in CSV order =======
-    IN_APPS = "data_raw/googleplaystore.csv"
+    IN_APPS = "D:/aditi/Quarter1/ECE143/ECE143_Project/data_cleaning/data_raw/googleplaystore.csv"
     preview = head_with_csv_lines(IN_APPS, n=5)
     print("\nFirst 5 data rows with CSV line numbers:")
     print(preview.to_string(index=False))
 
     # ======= Apps: clean (keep latest per App) =======
-    OUT_APPS = "data_processed/googleplaystore_clean.csv"
+    OUT_APPS = "D:/aditi/Quarter1/ECE143/ECE143_Project/data_cleaning/data_processed/googleplaystore_clean.csv"
     df_apps, rep_apps = clean_googleplay_apps(
         IN_APPS, out_csv=OUT_APPS, keep_latest_per_app=True
     )
