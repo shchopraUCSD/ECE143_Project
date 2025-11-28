@@ -1,0 +1,6 @@
+,Low (<10K),Medium-Low (10K-100K),Medium (100K-1M),Medium-High (1M-10M),High (>10M)
+Low (<10K),559,70,0,0,0
+Medium-Low (10K-100K),24,243,33,0,0
+Medium (100K-1M),1,55,229,38,0
+Medium-High (1M-10M),0,3,48,293,61
+High (>10M),0,0,1,29,245
