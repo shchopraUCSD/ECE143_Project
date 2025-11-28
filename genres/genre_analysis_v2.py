@@ -90,18 +90,18 @@ def plot_family_game_genres_comparison(
     # Normalize installs for better visualization (divide by 1M)
     installs_normalized = family_data['Total_Installs'] / 1_000_000
     
-    bars1 = ax.bar(x - width/2, family_data['App_Count'], width, label='Number of Apps', color='#4472C4', alpha=0.8)
+    bars1 = ax.bar(x - width/2, family_data['App_Count'], width, label='Number of Apps', color='blue', alpha=0.7)
     ax2 = ax.twinx()
-    bars2 = ax2.bar(x + width/2, installs_normalized, width, label='Total Installs (M)', color='#ED7D31', alpha=0.8)
+    bars2 = ax2.bar(x + width/2, installs_normalized, width, label='Total Installs (M)', color='red', alpha=0.7)
     
     ax.set_xlabel('Genre', fontsize=12, weight='bold')
-    ax.set_ylabel('Number of Apps', fontsize=12, weight='bold', color='#4472C4')
-    ax2.set_ylabel('Total Installs (Millions)', fontsize=12, weight='bold', color='#ED7D31')
+    ax.set_ylabel('Number of Apps', fontsize=12, weight='bold', color='blue')
+    ax2.set_ylabel('Total Installs (Millions)', fontsize=12, weight='bold', color='red')
     ax.set_title('FAMILY Category: Genres by App Count and Total Installs', fontsize=14, weight='bold', pad=20)
     ax.set_xticks(x)
     ax.set_xticklabels(family_data['Genre'], rotation=45, ha='right')
-    ax.tick_params(axis='y', labelcolor='#4472C4')
-    ax2.tick_params(axis='y', labelcolor='#ED7D31')
+    ax.tick_params(axis='y', labelcolor='blue')
+    ax2.tick_params(axis='y', labelcolor='red')
     ax.grid(True, alpha=0.3, axis='y')
     
     # Combined legend
@@ -124,18 +124,18 @@ def plot_family_game_genres_comparison(
     # Normalize installs for better visualization (divide by 1M)
     installs_normalized = game_data['Total_Installs'] / 1_000_000
     
-    bars1 = ax.bar(x - width/2, game_data['App_Count'], width, label='Number of Apps', color='#4472C4', alpha=0.8)
+    bars1 = ax.bar(x - width/2, game_data['App_Count'], width, label='Number of Apps', color='blue', alpha=0.7)
     ax2 = ax.twinx()
-    bars2 = ax2.bar(x + width/2, installs_normalized, width, label='Total Installs (M)', color='#ED7D31', alpha=0.8)
+    bars2 = ax2.bar(x + width/2, installs_normalized, width, label='Total Installs (M)', color='red', alpha=0.7)
     
     ax.set_xlabel('Genre', fontsize=12, weight='bold')
-    ax.set_ylabel('Number of Apps', fontsize=12, weight='bold', color='#4472C4')
-    ax2.set_ylabel('Total Installs (Millions)', fontsize=12, weight='bold', color='#ED7D31')
+    ax.set_ylabel('Number of Apps', fontsize=12, weight='bold', color='blue')
+    ax2.set_ylabel('Total Installs (Millions)', fontsize=12, weight='bold', color='red')
     ax.set_title('GAME Category: Genres by App Count and Total Installs', fontsize=14, weight='bold', pad=20)
     ax.set_xticks(x)
     ax.set_xticklabels(game_data['Genre'], rotation=45, ha='right')
-    ax.tick_params(axis='y', labelcolor='#4472C4')
-    ax2.tick_params(axis='y', labelcolor='#ED7D31')
+    ax.tick_params(axis='y', labelcolor='blue')
+    ax2.tick_params(axis='y', labelcolor='red')
     ax.grid(True, alpha=0.3, axis='y')
     
     # Combined legend
