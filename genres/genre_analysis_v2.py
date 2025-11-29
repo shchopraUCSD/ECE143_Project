@@ -45,13 +45,12 @@ def compute_genre_statistics(df_exploded: pd.DataFrame) -> pd.DataFrame:
     stats = df_exploded.groupby(['Category', 'Genre']).agg({
         'App': 'nunique',  # Count unique apps
         'Installs': ['mean', 'median', 'sum'],
-        'Rating': 'mean',
-        'Popularity Score': 'mean'
+        'Rating': 'mean'
     }).reset_index()
     
     # Flatten column names
     stats.columns = ['Category', 'Genre', 'App_Count', 'Avg_Installs', 
-                     'Median_Installs', 'Total_Installs', 'Avg_Rating', 'Avg_Popularity_Score']
+                     'Median_Installs', 'Total_Installs', 'Avg_Rating']
     
     # Add rank within category by Avg_Installs
     stats['Rank_in_Category'] = stats.groupby('Category')['Avg_Installs'].rank(
