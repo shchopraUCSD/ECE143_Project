@@ -1,7 +1,7 @@
 # main.py
 from reviews_cleaning import run_reviews_cleaning, run_reviews_stats
 from apps_cleaning import head_with_csv_lines, clean_googleplay_apps, apps_basic_stats
-from data_visualisation import create_analysis_dashboard
+
 
 
 def _sample_lines(lines, k=20):
@@ -10,9 +10,9 @@ def _sample_lines(lines, k=20):
 
 if __name__ == "__main__":
     # ======= Reviews: clean + stats + figs =======
-    IN_REV  = "D:/aditi/Quarter1/ECE143/ECE143_Project/data_cleaning/data_raw/googleplaystore_user_reviews.csv"
-    OUT_REV = "D:/aditi/Quarter1/ECE143/ECE143_Project/data_cleaning/data_processed/reviews_clean.csv"
-    FIG_REV = "D:/aditi/Quarter1/ECE143/ECE143_Project/data_cleaning/figs/reviews"
+    IN_REV  = "data_cleaning/data_raw/googleplaystore_user_reviews.csv"
+    OUT_REV = "data_cleaning/data_processed/reviews_clean.csv"
+    FIG_REV = "figs/reviews"
 
     df_rev, rep_rev = run_reviews_cleaning(IN_REV, out_csv=OUT_REV, also_drop_empty_text=True)
     stats_rev = run_reviews_stats(OUT_REV, out_dir=FIG_REV)
@@ -26,13 +26,13 @@ if __name__ == "__main__":
     print(f"\nFigures saved to: {FIG_REV}")
 
     # ======= Apps: preview first 5 rows in CSV order =======
-    IN_APPS = "D:/aditi/Quarter1/ECE143/ECE143_Project/data_cleaning/data_raw/googleplaystore.csv"
+    IN_APPS = "data_cleaning/data_raw/googleplaystore.csv"
     preview = head_with_csv_lines(IN_APPS, n=5)
     print("\nFirst 5 data rows with CSV line numbers:")
     print(preview.to_string(index=False))
 
     # ======= Apps: clean (keep latest per App) =======
-    OUT_APPS = "D:/aditi/Quarter1/ECE143/ECE143_Project/data_cleaning/data_processed/googleplaystore_clean.csv"
+    OUT_APPS = "data_cleaning/data_processed/googleplaystore_clean.csv"
     df_apps, rep_apps = clean_googleplay_apps(
         IN_APPS, out_csv=OUT_APPS, keep_latest_per_app=True
     )
@@ -71,17 +71,9 @@ if __name__ == "__main__":
     print(f"Type NA: {rep_apps.get('type_na', 0)}")
     print("  -> csv lines (sample):", _sample_lines(rep_apps.get("type_na_lines", [])))
 
-    # print(f"Current Ver NA: {rep_apps.get('current_ver_na', 0)}")
-    # print("  -> csv lines (sample):", _sample_lines(rep_apps.get("current_ver_na", [])))
-
     print(f"Android Ver NA: {rep_apps.get('android_ver_na', 0)}")
     print("  -> csv lines (sample):", _sample_lines(rep_apps.get("android_ver_na", [])))
 
-    # print(f"Genres NA: {rep_apps.get('genres_na', 0)}")
-    # print("  -> csv lines (sample):", _sample_lines(rep_apps.get("genres_na", [])))
-
-    # ======== Apps: Visualisation ==========
-    create_analysis_dashboard(df_apps,FIG_REV)
     # ======= Apps: numeric basic stats  =======
     stats_apps = apps_basic_stats(df_apps)
     print("\n[Apps] Basic stats:")

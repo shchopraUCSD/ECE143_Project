@@ -1,6 +1,6 @@
 
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple,Union
+from typing import  Optional
 import matplotlib.cm as cm
 import matplotlib.colors as mcolors
 import pandas as pd
@@ -9,8 +9,20 @@ import matplotlib.patches as mpatches
 import seaborn as sns
 # from apps_cleaning import head_with_csv_lines, clean_googleplay_apps, apps_basic_stats
 
-def create_viz_for_content_rating(df: pd.DataFrame,out_dir:  Path):
-    out_dir.mkdir(parents=True, exist_ok=True)
+def create_viz_for_content_rating(root: Optional[Path] = None,
+    csv_path: str = "data_cleaning/data_processed/googleplaystore_clean.csv",
+    out_dir: str = "figs/content_rating"):
+
+    if root is None:
+        root = Path(__file__).parent.parent
+    else:
+        root = Path(root)
+    
+    csv_file = root / csv_path
+    out_dir = root / out_dir
+    Path(out_dir).mkdir(parents=True, exist_ok=True)
+    
+    df = pd.read_csv(csv_file)
     # What is the count of apps under each content rating?
     plt.figure(figsize=(20,6))
     counts = df['Content Rating'].value_counts()
@@ -22,7 +34,7 @@ def create_viz_for_content_rating(df: pd.DataFrame,out_dir:  Path):
     plt.title("Count of Content Rating of App")
     plt.savefig(out_dir / f"Content_Rating_vs_Count.png", bbox_inches="tight")
     plt.close()
-    # plt.show()
+    
     
     #What is the content rating plot for each category? Which category has which kind of content rating?
     plt.figure(figsize=(20,6))
@@ -76,11 +88,8 @@ def create_viz_for_content_rating(df: pd.DataFrame,out_dir:  Path):
     
 
 
-
-def create_analysis_dashboard (df: pd.DataFrame,path : str):
-    print("creating visualisation for content rating col")
-    create_viz_for_content_rating(df, Path(path))
-        
+if __name__ == "__main__":
+    create_viz_for_content_rating()
 
 
 
