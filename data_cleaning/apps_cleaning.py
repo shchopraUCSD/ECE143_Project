@@ -184,28 +184,28 @@ def clean_googleplay_apps(
     return df1, report
 
 def _size_to_mb(s: pd.Series) -> pd.Series:
-        """Convert `Size` strings (e.g., '14M', '512k') to MB as Float64."""
+    """Convert `Size` strings (e.g., '14M', '512k') to MB as Float64."""
+    ser = s.astype(str)
+    def parse_one(x: str):
+        if x is None or pd.isna(x):
+            return np.nan   
+        t = x.strip().replace(" ", "").upper()
+        if t == "" or t in {"VARIESWITHDEVICE", "VARIES", "NAN"}:
+            return np.nan
+        try:
+            if t.endswith("M"):
+                return float(t[:-1])
+            if t.endswith("K"):
+                return float(t[:-1]) / 1024.0
+            return float(t)
+        except Exception:
+            return np.nan
 
-        ser = s.astype(str)
-        def parse_one(x: str):
-            if x is None or pd.isna(x):
-                return pd.NA
-            t = x.strip().replace(" ", "").upper()
-            if t == "" or t in {"VARIESWITHDEVICE", "VARIES", "NAN"}:
-                return pd.NA
-            try:
-                if t.endswith("M"):
-                    return float(t[:-1])
-                if t.endswith("K"):
-                    return float(t[:-1]) / 1024.0
-                return float(t) 
-            except Exception:
-                return pd.NA
-
-        out = ser.map(parse_one)
-        median_val = out.median()
-        out = out.fillna(median_val)
-        return out.astype("Float64")
+    out = ser.map(parse_one)
+    out = pd.to_numeric(out, errors="coerce")
+    median_val = out.median()
+    out = out.fillna(median_val)
+    return out.astype("Float64")
 
 def apps_basic_stats(df: pd.DataFrame) -> pd.DataFrame:
     """Compute basic numeric stats for apps."""
