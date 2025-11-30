@@ -73,7 +73,7 @@ def analyze_correlations(df):
     # Scatter plots for key relationships
     fig, axes = plt.subplots(2, 2, figsize=(15, 12))
 
-    # 1. Installs vs Total Reviews
+    # 1 Installs vs Total Reviews
     ax = axes[0, 0]
     ax.scatter(df['Total_Reviews'], df['Installs'], alpha=0.5, s=30)
     ax.set_xlabel('Total Reviews (including NaNs)', fontsize=11, fontweight='bold')
@@ -124,7 +124,7 @@ def analyze_correlations(df):
 
     plt.tight_layout()
     plt.savefig(OUTPUT_DIR / 'installs_vs_sentiment_scatter.png', dpi=300, bbox_inches='tight')
-    print(f"✓ Saved: {OUTPUT_DIR / 'installs_vs_sentiment_scatter.png'}")
+    print(f"Saved: {OUTPUT_DIR / 'installs_vs_sentiment_scatter.png'}")
     plt.close()
 
     return corr_matrix
@@ -172,7 +172,7 @@ def analyze_objectivity_vs_subjectivity(df):
 
     plt.tight_layout()
     plt.savefig(OUTPUT_DIR / 'objectivity_vs_subjectivity.png', dpi=300, bbox_inches='tight')
-    print(f"\n Saved: {OUTPUT_DIR / 'objectivity_vs_subjectivity.png'}")
+    print(f"Saved: {OUTPUT_DIR / 'objectivity_vs_subjectivity.png'}")
     plt.close()
 
 
@@ -209,7 +209,7 @@ def analyze_subjectivity_by_category(df):
     ax.set_yticks(y_pos)
     ax.set_yticklabels(categories_sorted.index, fontsize=9)
     ax.set_xlabel('Mean Subjectivity Score', fontsize=12, fontweight='bold')
-    ax.set_title('Mean Comment Subjectivity by Category (≥10 apps)',
+    ax.set_title('Mean Comment Subjectivity by Category (>10 apps)',
                  fontsize=14, fontweight='bold')
     ax.axvline(0.5, color='blue', linestyle='--', linewidth=2, alpha=0.7,
                label='Objective/Subjective Threshold')
@@ -248,7 +248,7 @@ def analyze_subjectivity_by_category(df):
 
     plt.tight_layout()
     plt.savefig(OUTPUT_DIR / 'subjectivity_by_category.png', dpi=300, bbox_inches='tight')
-    print(f"\n✓ Saved: {OUTPUT_DIR / 'subjectivity_by_category.png'}")
+    print(f"\nSaved: {OUTPUT_DIR / 'subjectivity_by_category.png'}")
     plt.close()
 
     category_groups = []
@@ -259,20 +259,20 @@ def analyze_subjectivity_by_category(df):
 
     if len(category_groups) >= 2:
         f_stat, p_value = stats.f_oneway(*category_groups)
-        print(f"\nANOVA Test (top categories):")
-        print(f"  F-statistic: {f_stat:.4f}")
-        print(f"  P-value:     {p_value:.6f}")
+        print(f"\n Anova Test (top categories):")
+        print(f"F-statistic:{f_stat:.4f}")
+        print(f"P-value:{p_value:.6f}")
         if p_value < 0.05:
-            print("  → Categories differ SIGNIFICANTLY in subjectivity (p < 0.05)")
+            print("Categories differ significantly in subjectivity (p < 0.05)")
         else:
-            print("  → No significant difference between categories (p ≥ 0.05)")
+            print("No significant difference between categories (p > 0.05)")
 
     return category_subjectivity
 
 
 def generate_summary_report(df, corr_matrix, category_subjectivity):
     """Generate a summary report of key findings."""
-    print("SUMMARY REPORT")
+    print("Summary")
     report = []
     report.append("Sentiment Analysis: Key Findings")
 
@@ -294,13 +294,13 @@ def generate_summary_report(df, corr_matrix, category_subjectivity):
     if subjectivity.mean() < 0.5:
         report.append(f"Users tend to give more objective comments")
     else:
-        report.append(f"Users tend to give MORE SUBJECTIVE comments")
+        report.append(f"Users tend to give more subjective comments")
     report.append(f"Mean subjectivity: {subjectivity.mean():.4f}")
     report.append(f"Objective apps: {obj_pct:.1f}%")
     report.append(f"Subjective apps: {subj_pct:.1f}%")
 
     # 3. Category findings
-    report.append("3. Subjectivity BY Category:")
+    report.append("3 Subjectivity by Category:")
     most_subjective = category_subjectivity.nlargest(3, 'Mean')
     most_objective = category_subjectivity.nsmallest(3, 'Mean')
 
@@ -325,18 +325,15 @@ def generate_summary_report(df, corr_matrix, category_subjectivity):
 
 
 def main():
-    print("Sentiment & Installs Correlation Analysis")
-    # Load data
     df = load_and_merge_data()
-    # 1. Correlation analysis
+    # 1 Correlation analysis
     corr_matrix = analyze_correlations(df)
-    # 2. Objectivity vs subjectivity
+    # 2 Objectivity vs subjectivity
     analyze_objectivity_vs_subjectivity(df)
-    # 3. Subjectivity by category
+    # 3 Subjectivity by category
     category_subjectivity = analyze_subjectivity_by_category(df)
-    # 4. Generate summary report
+    # 4 Generate summary report
     generate_summary_report(df, corr_matrix, category_subjectivity)
-    print("Finish Analysis")
     print(f"results saved to: {OUTPUT_DIR}/")
 
 
