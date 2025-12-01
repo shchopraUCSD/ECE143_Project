@@ -4,7 +4,7 @@ This project provides an in-depth analysis of the Google Play Store Apps dataset
 
 ## Key Libraries Used
 
-##### pandas as pd
+##### pandas 
 
 ##### matplotlib
 
