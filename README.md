@@ -24,7 +24,7 @@ This project provides an in-depth analysis of the Google Play Store Apps dataset
 |   |-- analysis_results
 |   |-- data_processed
 |   |-- data_raw
-|   `-- __pycache__
+|   |-- __pycache__
 |-- figs
 |   |-- app_active_dev
 |   |-- content_rating
@@ -32,11 +32,11 @@ This project provides an in-depth analysis of the Google Play Store Apps dataset
 |   |-- genres
 |   |-- prediction
 |   |-- ratings_installs
-|   `-- reviews
+|   |-- reviews
 |-- genres
 |-- prediction
 |-- rating and installs
-`-- venv
+|-- venv
 
 ## Folder Descriptions
 
