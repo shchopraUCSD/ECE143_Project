@@ -4,39 +4,46 @@ This project provides an in-depth analysis of the Google Play Store Apps dataset
 
 ## Key Libraries Used
 
-pandas as pd
-matplotlib
-seaborn
-numpy
+##### pandas as pd
+
+##### matplotlib
+
+##### seaborn
+
+##### numpy
 
 
 ## Folder Structure
 
-├── .idea
-├── app_dev_active
-├── content_rating
-├── correlations
-├── data_cleaning
-│   ├── analysis_results
-│   ├── data_processed
-│   ├── data_raw
-│   └── __pycache__
-├── figs
-│   ├── app_active_dev
-│   ├── content_rating
-│   ├── correlations
-│   ├── genres
-│   ├── prediction
-│   ├── ratings_installs
-│   └── reviews
-├── genres
-├── prediction
-├── rating and installs
-└── venv
+.
+|-- .idea
+|-- app_dev_active
+|-- content_rating
+|-- correlations
+|-- data_cleaning
+|   |-- analysis_results
+|   |-- data_processed
+|   |-- data_raw
+|   `-- __pycache__
+|-- figs
+|   |-- app_active_dev
+|   |-- content_rating
+|   |-- correlations
+|   |-- genres
+|   |-- prediction
+|   |-- ratings_installs
+|   `-- reviews
+|-- genres
+|-- prediction
+|-- rating and installs
+`-- venv
 
 ## Folder Descriptions
 
-data_cleaning/: The data is processed and cleaned CSVs are kept here.
-prediction/: The final prediction model folder.
-genres/, content_rating/, correlations/, rating and installs/, app_dev_active/: Folders for analysis.
-figs/: Visualizations folder.
+#### data_cleaning/: The data is processed and cleaned CSVs are kept here.
+
+#### prediction/: The final prediction model folder.
+
+#### genres/, content_rating/, correlations/, rating and installs/, app_dev_active/: Folders for analysis.
+
+#### figs/: Visualizations folder.
