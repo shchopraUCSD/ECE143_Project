@@ -15,6 +15,7 @@ This project provides an in-depth analysis of the Google Play Store Apps dataset
 
 ## Folder Structure
 
+```
 .
 |-- .idea
 |-- app_dev_active
@@ -25,6 +26,7 @@ This project provides an in-depth analysis of the Google Play Store Apps dataset
 |   |-- data_processed
 |   |-- data_raw
 |   |-- __pycache__
+|-- docs
 |-- figs
 |   |-- app_active_dev
 |   |-- content_rating
@@ -37,6 +39,7 @@ This project provides an in-depth analysis of the Google Play Store Apps dataset
 |-- prediction
 |-- rating and installs
 |-- venv
+```
 
 ## Folder Descriptions
 
@@ -47,3 +50,5 @@ This project provides an in-depth analysis of the Google Play Store Apps dataset
 #### genres/, content_rating/, correlations/, rating and installs/, app_dev_active/: Folders for analysis.
 
 #### figs/: Visualizations folder.
+
+#### docs/: project proposal & slide deck 
